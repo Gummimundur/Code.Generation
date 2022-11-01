@@ -306,8 +306,14 @@ class ICGVisitor(visitor.Visitor):
     @visit.register
     def _(self, node: ast.IfExprNode):
         self.do_visit(node.condition)
+        else_label = BC.Label()
+        then_label = BC.Label()
+        self.emit(BC.Instr(BC.InstrCode.ifeq, [str(else_label)]))
         self.do_visit(node.then_expr)
+        self.emit(BC.Instr(BC.InstrCode.goto, [str(then_label)]))
+        self.emit_label(else_label)
         self.do_visit(node.else_expr)
+        self.emit_label(then_label)
 
     @visit.register
     def _(self, node: ast.WhileStmtNode):
