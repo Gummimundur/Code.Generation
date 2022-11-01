@@ -2,6 +2,7 @@
 # ICGVisitor version 1.00
 #
 import functools
+from operator import ne
 import pathlib
 import astree as ast
 from astree import Operator
@@ -326,14 +327,24 @@ class ICGVisitor(visitor.Visitor):
         #  - Do not worry if you end up creating some unnecessary labels (doing so might simplify your
         #    implementation a bit, e.g., by jumping to the 'else' part without checking if it exists).
         self.do_visit(node.condition)
+        stmt_false_label = BC.Label()
+        next_label = BC.Label()
+        self.emit(BC.Instr(BC.InstrCode.ifeq, [str(stmt_false_label)]))
         for s in node.then_body:
             self.do_visit(s)
+        self.emit(BC.Instr(BC.InstrCode.goto, [str(next_label)]))
+        self.emit_label(stmt_false_label)
         for e in node.elifs:
+            stmt_false_label = BC.Label()
             self.do_visit(e[0])
+            self.emit(BC.Instr(BC.InstrCode.ifeq, [str(stmt_false_label)]))
             for s in e[1]:
                 self.do_visit(s)
+            self.emit(BC.Instr(BC.InstrCode.goto, [str(next_label)]))
+            self.emit_label(stmt_false_label)
         for s in node.else_body:
             self.do_visit(s)
+        self.emit_label(next_label)
 
     @visit.register
     def _(self, node: ast.AssignStmtNode):
