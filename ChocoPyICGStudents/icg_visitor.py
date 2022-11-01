@@ -278,14 +278,14 @@ class ICGVisitor(visitor.Visitor):
         self.do_visit(node.lhs)
         if node.op == Operator.And:
             self.emit(BC.Instr(BC.InstrCode.dup))
+            next_label = BC.Label()
             self.emit(BC.Instr(BC.InstrCode.ifeq, [str(next_label)]))
             self.emit(BC.Instr(BC.InstrCode.pop))
-            self.emit_label(BC.Label())
         elif node.op == Operator.Or:
             self.emit(BC.Instr(BC.InstrCode.dup))
+            next_label = BC.Label()
             self.emit(BC.Instr(BC.InstrCode.ifne, [str(next_label)]))
             self.emit(BC.Instr(BC.InstrCode.pop))
-            self.emit_label(BC.Label())
         self.do_visit(node.rhs)
         if node.op in rel_ops:
             next_label = BC.Label()
