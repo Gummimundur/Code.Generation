@@ -255,6 +255,27 @@ class ICGVisitor(visitor.Visitor):
         # Hints:
         #  - You might find the arithm_ops and rel_ops dictionaries defined above helpful.
         #  - Also, remember the logical binary operators ('and' and 'or') and remember their short-circuiting.
+
+        # AND and OR are only allowed when the nodes are expressions, and not int/string/bool.
+        # load 1
+        # load 2
+        # do the operation on top 2 on the stack (which we just loaded)
+
+        #one of
+        
+        # BC.InstrCode.iadd
+        # BC.InstrCode.isub
+        # BC.InstrCode.imul
+        # BC.InstrCode.idiv
+        # BC.InstrCode.irem
+
+        # BC.InstrCode.if_icmpeq
+        # BC.InstrCode.if_icmpne
+        # BC.InstrCode.if_icmplt
+        # BC.InstrCode.if_icmple
+        # BC.InstrCode.if_icmpgt
+        # BC.InstrCode.if_icmpge
+
         self.do_visit(node.lhs)
         self.do_visit(node.rhs)
 
