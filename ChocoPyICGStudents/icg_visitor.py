@@ -356,8 +356,11 @@ class ICGVisitor(visitor.Visitor):
 
         self.do_visit(node.expr)
         for t in node.targets:
-            # self.do_visit(t)
             if isinstance(t, ast.IdentifierExprNode):
-                ...
+                if t == node.targets[-1]:
+                    self.emit(BC.Instr(BC.InstrCode.istore, self.bc_load(t.identifier.name)._args))
+                else:
+                    self.emit(BC.Instr(BC.InstrCode.dup))
+                    self.emit(BC.Instr(BC.InstrCode.istore, self.bc_load(t.identifier.name)._args))
             else:
                 assert False, "ERROR: Internal compiler error, should not happen."
