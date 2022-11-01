@@ -246,6 +246,8 @@ class ICGVisitor(visitor.Visitor):
     @visit.register
     def _(self, node: ast.IdentifierExprNode):
         self.do_visit(node.identifier)
+        loaded_value = self.bc_load(node.identifier.name)
+        self.emit(BC.Instr(BC.InstrCode.iload, loaded_value._args))
 
     @visit.register
     def _(self, node: ast.BinaryOpExprNode):
