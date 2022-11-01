@@ -240,7 +240,7 @@ class ICGVisitor(visitor.Visitor):
     def _(self, node: ast.BooleanLiteralExprNode):
         # Hints:
         #  - Boolean values are represented with integers (0: False, 1: True)
-        ...
+        return 1 if node.value else 0
 
     @visit.register
     def _(self, node: ast.IdentifierExprNode):
