@@ -265,9 +265,15 @@ class ICGVisitor(visitor.Visitor):
 
     @visit.register
     def _(self, node: ast.WhileStmtNode):
+        curr_label = BC.Label()
+        next_label = BC.Label()
+        self.emit_label(curr_label)
         self.do_visit(node.condition)
+        self.emit(BC.Instr(BC.InstrCode.ifeq, [str(next_label)]))
         for s in node.body:
             self.do_visit(s)
+        self.emit(BC.Instr(BC.InstrCode.goto, [str(curr_label)]))
+        self.emit_label(next_label)
 
     @visit.register
     def _(self, node: ast.IfStmtNode):
