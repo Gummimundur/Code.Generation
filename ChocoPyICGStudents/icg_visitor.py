@@ -220,7 +220,8 @@ class ICGVisitor(visitor.Visitor):
         for d in node.declarations:
             self.do_visit(d)
         self._program.append('.method public static main : ([Ljava/lang/String;)V')
-        self._program.append(f'.code stack {STACK_SIZE} locals {len(self._locals)}  ; {str(self._locals[-1])}')
+        # self._program.append(f'.code stack {STACK_SIZE} locals {len(self._locals)}  ; {str(self._locals[-1])}')
+        self._program.append(f'.code stack {STACK_SIZE} locals {len(self._locals[-1])}  ; {str(self._locals[-1])}')
         for s in node.statements:
             self.do_visit(s)
         self.emit(BC.Instr(BC.InstrCode.return_))
