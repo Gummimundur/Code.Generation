@@ -276,17 +276,19 @@ class ICGVisitor(visitor.Visitor):
         # BC.InstrCode.if_icmpgt
         # BC.InstrCode.if_icmpge
         self.do_visit(node.lhs)
-        next_label = BC.Label()
         if node.op == Operator.And:
             self.emit(BC.Instr(BC.InstrCode.dup))
             self.emit(BC.Instr(BC.InstrCode.ifeq, [str(next_label)]))
             self.emit(BC.Instr(BC.InstrCode.pop))
+            self.emit_label(BC.Label())
         elif node.op == Operator.Or:
             self.emit(BC.Instr(BC.InstrCode.dup))
             self.emit(BC.Instr(BC.InstrCode.ifne, [str(next_label)]))
             self.emit(BC.Instr(BC.InstrCode.pop))
+            self.emit_label(BC.Label())
         self.do_visit(node.rhs)
         if node.op in rel_ops:
+            next_label = BC.Label()
             self.emit(BC.Instr(rel_ops[node.op], [str(next_label)]))
             self.emit(BC.Instr(BC.InstrCode.ldc, ['0']))
             prev_label = next_label
@@ -294,7 +296,11 @@ class ICGVisitor(visitor.Visitor):
             self.emit(BC.Instr(BC.InstrCode.goto, [str(next_label)]))
             self.emit_label(prev_label)
             self.emit(BC.Instr(BC.InstrCode.ldc, ['1']))
-        self.emit_label(next_label)
+            self.emit_label(next_label)
+        elif node.op in arithm_ops:
+            self.emit(BC.Instr(arithm_ops[node.op]))
+        else:
+            self.emit_label(next_label)
 
     @visit.register
     def _(self, node: ast.IfExprNode):
